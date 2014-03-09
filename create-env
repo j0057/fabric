@@ -1,0 +1,6 @@
+#!/bin/bash -x
+PYPKG=$HOME/pypkg27
+[ ! -d env ] && virtualenv --python=python2.7 --extra-search-dir=$PYPKG env
+env/bin/pip install --no-index --find-links=$PYPKG --use-wheel --upgrade pip wheel setuptools{,-metadata,-version-command}
+env/bin/pip install --no-index --find-links=$PYPKG --use-wheel --upgrade fabric fabtools
+
