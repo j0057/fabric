@@ -77,7 +77,7 @@ def debian_update_testing():
     with watch([ '/etc/apt/sources.list',
                  '/etc/apt/sources.list.d/testing.list',
                  '/etc/apt/sources.list.d/testing-updates.list' ]) as sources_list_d:
-        if fabric.contrib.files.contains('/etc/sources.list', '^deb', escape=False):
+        if contains('/etc/apt/sources.list', '^deb', escape=False):
             comment('/etc/apt/sources.list', '^deb', use_sudo=True)
         components = ['main', 'contrib', 'non-free']
         deb.source('testing', 'http://ftp.nl.debian.org/debian/', 'testing', *components)
