@@ -1,0 +1,16 @@
+{   
+    "root@xi.fritz.box:20022": {
+        "roles": ["debian", "debian-testing", "systemd", "info"],
+        "context": {
+            "hostname": "debian-vbox",
+            "accounts": ["root", "jjm"]
+        }
+    },
+    "root@xi.fritz.box:10022": {
+        "roles": ["info", "centos"],
+        "context": {
+            "hostname": "centos-vbox",
+            "accounts": ["root", "jjm"]
+        }
+    }
+}
