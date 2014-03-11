@@ -17,15 +17,8 @@ import yaml
 import debian
 import debian.nginx
 
-#with open('config.json') as jsonf:
-#    config = json.load(jsonf)
-
 with open('config.yaml') as yamlf:
     config = yaml.load(yamlf)
-
-servers = config['root@127.0.0.1:20022']['context']['nginx']
-print servers['test-site']
-print
 
 env.context = { host: cfg['context'] for (host, cfg) in config.items() }
 env.roledefs = { role: [ host for (host, cfg) in config.items() if role in cfg['roles'] ]
