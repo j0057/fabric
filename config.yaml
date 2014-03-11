@@ -1,43 +1,20 @@
-root@localhost:10022: 
+root@127.0.0.1:10022: 
+    roles: [centos]
     context: 
         accounts: [root, jjm]
         hostname: centos-vbox
-    roles: 
-        - centos
-root@localhost:20022: 
+root@127.0.0.1:20022: 
+    roles: [debian, debian-testing, debian-systemd, debian-nginx]
     context: 
         accounts: [root, jjm]
         hostname: debian-vbox
-    roles: [debian, debian-testing, debian-systemd]
-root@todo:30022:    
-    context:
-        accounts: [root, jjm]
-        hostname: todo-vbox
-        build-slave: debian-build-slave:8000
-        uwsgi-apps:
-            hello:
-                uwsgi-name: hello
-                python-dist: hello
-                module: hello
         nginx:
-            pi.j0057.nl:
-                /hello:
-                    type: uwsgi-app
-                    uwsgi-name: hello
-    roles: 
-        - nginx
-        - uwsgi
-        - uwsgi-app
-        - mysql 
-        - postgresql 
-        - couchdb
-        - rabbitmq
-        - postfix 
-        - postfix-policy-postgrey 
-        - postfix-policy-rbl 
-        - postfix-policy-spf 
-        - dovecot
-        - samba 
-        - cups 
-        - saned
-        - nfs 
+            test-site: |
+                server {
+                    listen      80;
+                    server_name test;
+                    location /hello {
+                        uwsgi_pass  unix:/run/uwsgi/hello.sock;
+                        include     /etc/nginx/uwsgi_params;
+                    }
+                }

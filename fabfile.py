@@ -12,21 +12,32 @@ import fabtools.require
 from fabric.api import *
 from fabric.contrib.files import *
 
+import yaml
+
 import debian
+import debian.nginx
 
-with open('config.json') as jsonf:
-    config = json.load(jsonf)
-    env.context = { host: cfg['context'] for (host, cfg) in config.items() }
-    env.roledefs = { role: [ host for (host, cfg) in config.items() if role in cfg['roles'] ]
-                     for role in { role for (host, cfg) in config.items() for role in cfg['roles'] } }
-    env.use_ssh_config = True
+#with open('config.json') as jsonf:
+#    config = json.load(jsonf)
 
-    if 0:
-        print '------------------'
-        print 'HOSTS:', env.hosts
-        print 'CONTEXT:', env.context
-        print 'ROLEDEFS:', env.roledefs
-        print '------------------'
+with open('config.yaml') as yamlf:
+    config = yaml.load(yamlf)
+
+servers = config['root@127.0.0.1:20022']['context']['nginx']
+print servers['test-site']
+print
+
+env.context = { host: cfg['context'] for (host, cfg) in config.items() }
+env.roledefs = { role: [ host for (host, cfg) in config.items() if role in cfg['roles'] ]
+                 for role in { role for (host, cfg) in config.items() for role in cfg['roles'] } }
+env.use_ssh_config = True
+
+if 0:
+    print '------------------'
+    print 'HOSTS:', env.hosts
+    print 'CONTEXT:', env.context
+    print 'ROLEDEFS:', env.roledefs
+    print '------------------'
 
 @roles('info')
 def info():
