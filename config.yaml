@@ -1,0 +1,43 @@
+root@localhost:10022: 
+    context: 
+        accounts: [root, jjm]
+        hostname: centos-vbox
+    roles: 
+        - centos
+root@localhost:20022: 
+    context: 
+        accounts: [root, jjm]
+        hostname: debian-vbox
+    roles: [debian, debian-testing, debian-systemd]
+root@todo:30022:    
+    context:
+        accounts: [root, jjm]
+        hostname: todo-vbox
+        build-slave: debian-build-slave:8000
+        uwsgi-apps:
+            hello:
+                uwsgi-name: hello
+                python-dist: hello
+                module: hello
+        nginx:
+            pi.j0057.nl:
+                /hello:
+                    type: uwsgi-app
+                    uwsgi-name: hello
+    roles: 
+        - nginx
+        - uwsgi
+        - uwsgi-app
+        - mysql 
+        - postgresql 
+        - couchdb
+        - rabbitmq
+        - postfix 
+        - postfix-policy-postgrey 
+        - postfix-policy-rbl 
+        - postfix-policy-spf 
+        - dovecot
+        - samba 
+        - cups 
+        - saned
+        - nfs 
