@@ -1,20 +1,74 @@
 root@127.0.0.1:10022: 
-    roles: [centos]
-    context: 
-        accounts: [root, jjm]
-        hostname: centos-vbox
+    roles: 
+        - centos
+    accounts: 
+        - root
+        - jjm
+    hostname: centos-vbox
 root@127.0.0.1:20022: 
-    roles: [debian, debian-testing, debian-systemd, debian-nginx]
-    context: 
-        accounts: [root, jjm]
-        hostname: debian-vbox
-        nginx:
-            test-site: |
-                server {
-                    listen      80;
-                    server_name test;
-                    location /hello {
-                        uwsgi_pass  unix:/run/uwsgi/hello.sock;
-                        include     /etc/nginx/uwsgi_params;
-                    }
+    roles:
+        - debian
+        - debian-testing
+        - debian-systemd
+        - debian-nginx
+        - debian-postfix
+    accounts: 
+        - root
+        - jjm
+    hostname: debian-vbox
+    nginx:
+        /etc/nginx/sites-enabled/test-site: |
+            server {
+                listen      80;
+                server_name test;
+                location /hello {
+                    uwsgi_pass  unix:/run/uwsgi/hello.sock;
+                    include     /etc/nginx/uwsgi_params;
                 }
+            }
+    postfix:
+        /etc/mailname: |
+            j0057.nl
+        /etc/postfix/main.cf:
+            myhostname: j0057.nl
+            mydomain: j0057.nl
+            mydestination:
+                - j0057.nl
+                - punosqnp.nl
+                - raspbian.fritz.box
+                - localhost.fritz.box
+                - localhost
+            smtpd_helo_required: yes
+            smtpd_helo_restrictions:
+                - permit_mynetworks
+                - reject_non_fqdn_hostname
+                - reject_invalid_hostname
+                - reject_unknown_hostname
+                - permit
+            smtpd_sender_restrictions:
+                - permit_sasl_authenticated
+                - permit_mynetworks
+                - reject_non_fqdn_sender
+                - reject_unknown_sender_domain
+                - permit
+            smtpd_recipient_restrictions:
+                - reject_unauth_pipelining
+                - reject_non_fqdn_recipient
+                - reject_unknown_recipient_domain
+                - permit_mynetworks
+                - permit_sasl_authenticated
+                - reject_unauth_destination
+                - reject_rbl_client relays.ordb.org
+                - reject_rbl_client sbl-xbl.spamhaus.org
+                - check_policy_service unix:private/policy-spf
+                - check_policy_service inet:127.0.0.1:10023
+                - permit
+            policy-spf_time_limit: 3600s
+            virtual_alias_maps: hash:/etc/postfix/virtual
+        /etc/postfix/master.cf: |
+            policy-spf unix - n n - - spawn
+              user=nobody argv=/usr/bin/policyd-spf
+        /etc/postfix/virtual: |
+            @j0057.nl jjm
+            @punosqnp.nl jjm
+
