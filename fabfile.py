@@ -16,6 +16,9 @@ import yaml
 
 import debian
 import debian.nginx
+import debian.postfix
+import debian.dovecot
+import debian.uwsgi
 
 with open('config.yaml') as yamlf:
     env.config = yaml.load(yamlf)
@@ -23,3 +26,10 @@ with open('config.yaml') as yamlf:
                      for role in { role for (host, cfg) in env.config.items() for role in cfg['roles'] } }
     env.use_ssh_config = True
 
+@task
+def everything():
+    execute(debian.configure)
+    execute(debian.nginx.nginx)
+    execute(debian.uwsgi.uwsgi)
+    execute(debian.postfix.postfix)
+    execute(debian.dovecot.dovecot)

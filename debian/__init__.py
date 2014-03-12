@@ -29,6 +29,7 @@ def set_hostname():
 @task
 @roles('debian')
 def set_passwords():
+    'Sets the passwords based on user input'
     accounts = env.config[env.host_string]['accounts']
     passwords = [ (account, prompt('password for {0}: '.format(account)))
                   for account in accounts
@@ -42,6 +43,7 @@ def set_passwords():
 @task
 @roles('debian')
 def create_apt_update_stamp():
+    "Create a time stamp on apt-get update"
     if not exists('/etc/apt/apt.conf.d/15update_stamp'):
         append('/etc/apt/apt.conf.d/15update_stamp',
             'APT::Update::Post-Invoke-Success' 
@@ -60,8 +62,8 @@ def update_testing():
         if contains('/etc/apt/sources.list', '^deb', escape=False):
             comment('/etc/apt/sources.list', '^deb', use_sudo=True)
             components = ['main', 'contrib', 'non-free']
-            deb.source('testing', 'http://ftp.nl.debian.org/debian/', 'testing', *components)
-            deb.source('testing-updates', 'http://security.debian.org/', 'testing/updates', *components)
+            deb.source('testing',         'http://ftp.nl.debian.org/debian/', 'testing', *components)
+            deb.source('testing-updates', 'http://security.debian.org/',      'testing/updates', *components)
     if sources_list_d.changed:
         run('DEBIAN_FRONTEND=noninteractive APT_LISTCHANGES_FRONTED=none apt-get'
             ' -o Dpkg::Options::="--force-confnew"'
@@ -72,7 +74,8 @@ def update_testing():
 
 @task
 @roles('debian')
-def upgrade():
+def upgrade(dist=False):
+    'Upgrade everything'
     with watch('/var/lib/apt/periodic/update-success-stamp') as update:
         deb.uptodate_index(max_age=3600)
     if update.changed:
@@ -88,7 +91,6 @@ def upgrade():
                 ' -fuy'
                 ' --quiet'
                 ' autoremove')
-
 
 @task
 @roles('debian-systemd')

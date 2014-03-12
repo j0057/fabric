@@ -12,6 +12,8 @@ root@127.0.0.1:20022:
         - debian-systemd
         - debian-nginx
         - debian-postfix
+        - debian-dovecot
+        - debian-uwsgi
     accounts: 
         - root
         - jjm
@@ -27,18 +29,21 @@ root@127.0.0.1:20022:
                 }
             }
     postfix:
-        /etc/mailname: |
+        mailname: |
             j0057.nl
-        /etc/postfix/main.cf:
+        main.cf:
+            inet_protocols: ipv4
             myhostname: j0057.nl
             mydomain: j0057.nl
             mydestination:
                 - j0057.nl
                 - punosqnp.nl
                 - raspbian.fritz.box
+                - raspbian
                 - localhost.fritz.box
                 - localhost
-            smtpd_helo_required: yes
+            smtpd_delay_reject: "yes"
+            smtpd_helo_required: "yes"
             smtpd_helo_restrictions:
                 - permit_mynetworks
                 - reject_non_fqdn_hostname
@@ -65,10 +70,10 @@ root@127.0.0.1:20022:
                 - permit
             policy-spf_time_limit: 3600s
             virtual_alias_maps: hash:/etc/postfix/virtual
-        /etc/postfix/master.cf: |
+        master.cf: |
             policy-spf unix - n n - - spawn
               user=nobody argv=/usr/bin/policyd-spf
-        /etc/postfix/virtual: |
+        virtual: |
             @j0057.nl jjm
             @punosqnp.nl jjm
 
