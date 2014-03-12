@@ -15,9 +15,9 @@ from fabtools.require import deb
 @task
 @roles('debian')
 def set_hostname():
-    "Sets the right hostname based on context"
+    "Sets the right hostname based on config"
     current = run('hostname', quiet=True)
-    wanted = env.context[env.host_string]['hostname']
+    wanted = env.config[env.host_string]['hostname']
     if current != wanted:
         with watch([ '/etc/hostname',
                      '/etc/hosts' ]) as etc_host:
@@ -29,7 +29,7 @@ def set_hostname():
 @task
 @roles('debian')
 def set_passwords():
-    accounts = env.context[env.host_string]['accounts']
+    accounts = env.config[env.host_string]['accounts']
     passwords = [ (account, prompt('password for {0}: '.format(account)))
                   for account in accounts
                   if not contains('/etc/passwords_changed', account) ]

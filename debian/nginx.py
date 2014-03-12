@@ -20,8 +20,8 @@ def install():
 @roles('debian-nginx')
 def configure():
     'Configure nginx servers'
-    for (site, content) in env.context[env.host_string]['nginx'].items():
-        fabtools.require.file('/etc/nginx/sites-enabled/{0}'.format(site), contents=content)
+    for (site, content) in env.config[env.host_string]['nginx'].items():
+        fabtools.require.file(site, contents=content)
 
 @task(default=True)
 @roles('debian-nginx')

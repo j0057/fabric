@@ -18,23 +18,8 @@ import debian
 import debian.nginx
 
 with open('config.yaml') as yamlf:
-    config = yaml.load(yamlf)
+    env.config = yaml.load(yamlf)
+    env.roledefs = { role: [ host for (host, cfg) in env.config.items() if role in cfg['roles'] ]
+                     for role in { role for (host, cfg) in env.config.items() for role in cfg['roles'] } }
+    env.use_ssh_config = True
 
-env.context = { host: cfg['context'] for (host, cfg) in config.items() }
-env.roledefs = { role: [ host for (host, cfg) in config.items() if role in cfg['roles'] ]
-                 for role in { role for (host, cfg) in config.items() for role in cfg['roles'] } }
-env.use_ssh_config = True
-
-if 0:
-    print '------------------'
-    print 'HOSTS:', env.hosts
-    print 'CONTEXT:', env.context
-    print 'ROLEDEFS:', env.roledefs
-    print '------------------'
-
-@roles('info')
-def info():
-    "Just dump some stats"
-    print '  hostname:', run('hostname', quiet=True)
-    print '  uname -a:', run('uname -a', quiet=True)
-    print '  whoami  :', run('whoami', quiet=True)
