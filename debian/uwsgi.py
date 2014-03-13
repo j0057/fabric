@@ -17,6 +17,6 @@ def install():
 
 @task(default=True)
 @roles('debian-uwsgi')
-def uwsgi():
+def main():
     'Do all the uWSGI things'
     execute(install)

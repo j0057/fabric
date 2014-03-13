@@ -26,6 +26,7 @@ def ensure_directive(filename, key, *values):
 @task
 @roles('debian-postfix')
 def configure():
+    'Configure postfix'
     config = env.config[env.host_string]['postfix']
 
     with watch('/etc/mailname') as mailname:
@@ -54,7 +55,7 @@ def configure():
 
 @task(default=True)
 @roles('debian-postfix')
-def postfix():
+def main():
     'Do all the postfix things'
     execute(install)
     execute(configure)

@@ -25,7 +25,7 @@ def configure():
 
 @task(default=True)
 @roles('debian-nginx')
-def nginx():
+def main():
     'Do all the nginx things'
     execute(install)
     execute(configure)

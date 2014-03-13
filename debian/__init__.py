@@ -57,13 +57,21 @@ def update_testing():
     "Upgrade from stable to testing"
     deb.package('sudo')
     with watch([ '/etc/apt/sources.list',
+                 '/etc/apt/sources.list.d/wheezy.list', 
+                 '/etc/apt/sources.list.d/wheezy-updates.list',
                  '/etc/apt/sources.list.d/testing.list',
                  '/etc/apt/sources.list.d/testing-updates.list' ]) as sources_list_d:
         if contains('/etc/apt/sources.list', '^deb', escape=False):
             comment('/etc/apt/sources.list', '^deb', use_sudo=True)
             components = ['main', 'contrib', 'non-free']
+            deb.source('stable',          'http://ftp.nl.debian.org/debian/', 'stable', *components)
+            deb.source('stable-updates',  'http://security.debian.org/',      'stable/updates', *components)
             deb.source('testing',         'http://ftp.nl.debian.org/debian/', 'testing', *components)
             deb.source('testing-updates', 'http://security.debian.org/',      'testing/updates', *components)
+    fabtools.require.file('/etc/apt/preferences.d/testing',
+        'Package: *\nPin: release a=testing\nPin-Priority: 901\n')
+    fabtools.require.file('/etc/apt/preferences.d/wheezy',
+        'Package: *\nPin: release a=stable\nPin-Priority: 101\n')
     if sources_list_d.changed:
         run('DEBIAN_FRONTEND=noninteractive APT_LISTCHANGES_FRONTED=none apt-get'
             ' -o Dpkg::Options::="--force-confnew"'
@@ -114,7 +122,7 @@ def bounce():
     reboot()
 
 @task(default=True)
-def configure():
+def main():
     "Configure all the things"
     execute(set_hostname)
     execute(set_passwords)

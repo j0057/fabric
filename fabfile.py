@@ -27,9 +27,9 @@ with open('config.yaml') as yamlf:
     env.use_ssh_config = True
 
 @task
-def everything():
-    execute(debian.configure)
-    execute(debian.nginx.nginx)
-    execute(debian.uwsgi.uwsgi)
-    execute(debian.postfix.postfix)
-    execute(debian.dovecot.dovecot)
+def go():
+    execute(debian.main)
+    execute(debian.nginx.main)
+    execute(debian.uwsgi.main)
+    execute(debian.postfix.main)
+    execute(debian.dovecot.main)

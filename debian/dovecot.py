@@ -16,6 +16,6 @@ def install():
 
 @task(default=True)
 @roles('debian-dovecot')
-def dovecot():
+def main():
     'Do all the dovecot things'
     execute(install)
