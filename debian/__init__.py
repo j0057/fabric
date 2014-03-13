@@ -57,8 +57,8 @@ def update_testing():
     "Upgrade from stable to testing"
     deb.package('sudo')
     with watch([ '/etc/apt/sources.list',
-                 '/etc/apt/sources.list.d/wheezy.list', 
-                 '/etc/apt/sources.list.d/wheezy-updates.list',
+                 '/etc/apt/sources.list.d/stable.list', 
+                 '/etc/apt/sources.list.d/stable-updates.list',
                  '/etc/apt/sources.list.d/testing.list',
                  '/etc/apt/sources.list.d/testing-updates.list' ]) as sources_list_d:
         if contains('/etc/apt/sources.list', '^deb', escape=False):

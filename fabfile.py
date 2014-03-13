@@ -19,12 +19,16 @@ import debian.nginx
 import debian.postfix
 import debian.dovecot
 import debian.uwsgi
+import debian.python
 
-with open('config.yaml') as yamlf:
-    env.config = yaml.load(yamlf)
-    env.roledefs = { role: [ host for (host, cfg) in env.config.items() if role in cfg['roles'] ]
-                     for role in { role for (host, cfg) in env.config.items() for role in cfg['roles'] } }
-    env.use_ssh_config = True
+def load_yaml(path):
+    with open(path) as f:
+        return yaml.load(f)
+
+env.config = load_yaml('config.yaml')
+env.roledefs = { role: [ host for (host, cfg) in env.config.items() if role in cfg['roles'] ]
+                 for role in { role for (host, cfg) in env.config.items() for role in cfg['roles'] } }
+env.update(load_yaml('settings.yaml'))
 
 @task
 def go():
@@ -33,3 +37,4 @@ def go():
     execute(debian.uwsgi.main)
     execute(debian.postfix.main)
     execute(debian.dovecot.main)
+    execute(debian.python.main)

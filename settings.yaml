@@ -1,0 +1,2 @@
+use_ssh_config: yes
+pypkg_url: http://xi.fritz.box:8000/pypkg27

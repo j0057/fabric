@@ -14,6 +14,7 @@ root@127.0.0.1:20022:
         - debian-postfix
         - debian-dovecot
         - debian-uwsgi
+        - debian-python
     accounts: 
         - root
         - jjm
@@ -24,10 +25,20 @@ root@127.0.0.1:20022:
                 listen      80;
                 server_name test;
                 location /hello {
-                    uwsgi_pass  unix:/run/uwsgi/hello.sock;
+                    uwsgi_pass  unix:/run/uwsgi/hello.socket;
                     include     /etc/nginx/uwsgi_params;
                 }
+                location / {
+                    root srv/root;
+                }
             }
+    virtualenv:
+        - path: /srv/hello
+          packages: [hello]
+          uid: www-data
+          gid: www-data
+    uwsgi:
+        - hello
     postfix:
         mailname: |
             j0057.nl
@@ -76,4 +87,3 @@ root@127.0.0.1:20022:
         virtual: |
             @j0057.nl jjm
             @punosqnp.nl jjm
-
