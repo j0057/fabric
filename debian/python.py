@@ -60,6 +60,19 @@ def create_envs():
 
 @task
 @roles('debian-python')
+def copy_packages():
+    'Copy packages to target machine'
+    fabtools.require.files.directory('/root/pypkg27')
+    for fn in os.listdir(env.pypkg_dir):
+        if not fn.endswith('.whl'):
+            continue
+        fabtools.require.file(
+            path=fn, 
+            source=env.pypkg_dir + '/' + fn,
+            verify_remote=False)
+
+@task
+@roles('debian-python')
 def install_packages():
     'Install packages in virtualenvs'
     for e in env.config[env.host_string]['virtualenv']:
