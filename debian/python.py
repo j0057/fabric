@@ -25,13 +25,13 @@ def get_installed(outdated=False, path=None):
 
 @task
 @roles('debian-python')
-def install():
+def python_install():
     'Install Python'
     deb.packages(['python2.7'])
 
 @task
 @roles('debian-python')
-def install_pip():
+def python_install_pip():
     'Install pip (ipip)'
     fabtools.require.deb.package('curl')
     if not fabtools.python.is_pip_installed():
@@ -39,7 +39,20 @@ def install_pip():
 
 @task
 @roles('debian-python')
-def prepare_virtualenv():
+def python_copy_packages():
+    'Copy packages to target machine'
+    fabtools.require.files.directory(env.pypkg_url)
+    for fn in os.listdir(env.pypkg_dir):
+        if not fn.endswith('.whl'):
+            continue
+        fabtools.require.file(
+            path=env.pypkg_url + '/' + fn, 
+            source=env.pypkg_dir + '/' + fn,
+            verify_remote=False)
+
+@task
+@roles('debian-python')
+def python_install_virtualenv():
     'Make sure pip, virtualenv and setuptools are up to date'
     pkgs = 'pip virtualenv setuptools'.split()
     missing = set(pkgs) - get_installed()
@@ -50,30 +63,17 @@ def prepare_virtualenv():
 
 @task
 @roles('debian-python')
-def create_envs():
+def python_create_envs():
     'Create virtualenvs'
     for e in env.config[env.host_string]['virtualenv']:
         if not fabtools.files.is_dir(e['path']):
             fabtools.require.files.directory(e['path'])
-            run('virtualenv --extra-search-dir=http://xi:8000/pypkg27 ' + e['path'])
+            run('virtualenv --extra-search-dir={0} {1}'.format(env.pypkg_url, e['path']))
             run('chown -R {0}.{1} {2}'.format(e['uid'], e['gid'], e['path']))
 
 @task
 @roles('debian-python')
-def copy_packages():
-    'Copy packages to target machine'
-    fabtools.require.files.directory('/root/pypkg27')
-    for fn in os.listdir(env.pypkg_dir):
-        if not fn.endswith('.whl'):
-            continue
-        fabtools.require.file(
-            path=fn, 
-            source=env.pypkg_dir + '/' + fn,
-            verify_remote=False)
-
-@task
-@roles('debian-python')
-def install_packages():
+def python_install_packages():
     'Install packages in virtualenvs'
     for e in env.config[env.host_string]['virtualenv']:
         missing = set(e['packages']) - get_installed(path=e['path'])
@@ -86,7 +86,7 @@ def install_packages():
 
 @task
 @roles('debian-python')
-def update_packages():
+def python_update_packages():
     'Install packages in virtualenvs'
     for e in env.config[env.host_string]['virtualenv']:
         outdated = set(e['packages']) & get_installed(outdated=True, path=e['path'])
@@ -99,10 +99,11 @@ def update_packages():
 
 @task(default=True)
 @roles('debian-python')
-def main():
+def python():
     'Do all the Python things'
-    execute(install)
-    execute(install_pip)
-    execute(prepare_virtualenv)
-    execute(create_envs)
-    execute(install_packages)
+    execute(python_install)
+    execute(python_copy_packages)
+    execute(python_install_pip)
+    execute(python_install_virtualenv)
+    execute(python_create_envs)
+    execute(python_install_packages)

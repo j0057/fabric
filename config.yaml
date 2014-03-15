@@ -20,18 +20,19 @@ root@127.0.0.1:20022:
         - jjm
     hostname: debian-vbox
     nginx:
-        /etc/nginx/sites-enabled/test-site: |
-            server {
-                listen      80;
-                server_name test;
-                location /hello {
-                    uwsgi_pass  unix:/run/uwsgi/hello.socket;
-                    include     /etc/nginx/uwsgi_params;
+        sites:
+            test-site: |
+                server {
+                    listen      80;
+                    server_name test;
+                    location /hello {
+                        uwsgi_pass  unix:/run/uwsgi/hello.socket;
+                        include     /etc/nginx/uwsgi_params;
+                    }
+                    location / {
+                        root srv/root;
+                    }
                 }
-                location / {
-                    root srv/root;
-                }
-            }
     virtualenv:
         - path: /srv/hello
           packages: [hello]

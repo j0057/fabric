@@ -10,7 +10,7 @@ from fabtools.require import deb
 
 @task
 @roles('debian-nginx')
-def install():
+def nginx_install():
     'Install nginx'
     deb.package('nginx-full')
     if exists('/etc/nginx/sites-enabled/default'):
@@ -18,16 +18,22 @@ def install():
 
 @task
 @roles('debian-nginx')
-def configure():
+def nginx_configure():
     'Configure nginx servers'
-    for (site, content) in env.config[env.host_string]['nginx'].items():
-        fabtools.require.file(site, contents=content)
+    for site in env.config[env.host_string]['nginx']['sites']:
+        if not exists('/etc/nginx/sites-enabled/' + site):
+            run('touch /etc/nginx/sites-enabled/' + site)
+    with watch([ '/etc/nginx/sites-enabled/' + site
+                 for site in env.config[env.host_string]['nginx']['sites'] ]) as sites:
+        for (site, content) in env.config[env.host_string]['nginx']['sites'].items():
+            fabtools.require.file('/etc/nginx/sites-enabled/' + site, contents=content)
+    if sites.changed:
+        run('systemctl restart nginx')
 
 @task(default=True)
 @roles('debian-nginx')
-def main():
+def nginx():
     'Do all the nginx things'
-    execute(install)
-    execute(configure)
-    run('systemctl restart nginx.service')
+    execute(nginx_install)
+    execute(nginx_configure)
 

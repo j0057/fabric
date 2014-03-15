@@ -10,14 +10,14 @@ from fabtools.require import deb
 
 @task
 @roles('debian-uwsgi')
-def install():
+def uwsgi_install():
     'Install uWSGI'
     deb.packages(['uwsgi', 'uwsgi-plugin-python', 'uwsgi-plugin-python3', 
                   'uwsgi-plugin-cgi'])
 
 @task
 @roles('debian-uwsgi')
-def create_run_uwsgi():
+def uwsgi_create_run_uwsgi():
     'Create /run/uwsgi directory'
     if not exists('/etc/tmpfiles.d/run_uwsgi.conf'):
         fabtools.require.file('/etc/tmpfiles.d/run_uwsgi.conf',
@@ -26,14 +26,15 @@ def create_run_uwsgi():
 
 @task
 @roles('debian-uwsgi')
-def create_systemd_unit_files():
+def uwsgi_create_systemd_unit_files():
     'Create unit files for socket-activated uWSGI apps (awesome)'
     fabtools.require.file('/etc/systemd/system/uwsgi@.service', UWSGI_SERVICE)
     fabtools.require.file('/etc/systemd/system/uwsgi@.socket', UWSGI_SOCKET)
 
 @task
 @roles('debian-uwsgi')
-def create_uwsgi_apps():
+def uwsgi_create_uwsgi_apps():
+    'Enable and start sockets for uWSGI apps'
     for name in env.config[env.host_string]['uwsgi']:
         if not exists('/etc/systemd/system/sockets.target.wants/uwsgi@{0}.socket'
                       .format(name)):
@@ -42,12 +43,12 @@ def create_uwsgi_apps():
 
 @task(default=True)
 @roles('debian-uwsgi')
-def main():
+def uwsgi():
     'Do all the uWSGI things'
-    execute(install)
-    execute(create_run_uwsgi)
-    execute(create_systemd_unit_files)
-    execute(create_uwsgi_apps)
+    execute(uwsgi_install)
+    execute(uwsgi_create_run_uwsgi)
+    execute(uwsgi_create_systemd_unit_files)
+    execute(uwsgi_create_uwsgi_apps)
 
 UWSGI_SERVICE = """
 [Unit]

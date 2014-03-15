@@ -10,12 +10,12 @@ from fabtools.require import deb
 
 @task
 @roles('debian-dovecot')
-def install():
+def dovecot_install():
     'Install dovecot'
     deb.packages(['dovecot-imapd'])
 
 @task(default=True)
 @roles('debian-dovecot')
-def main():
+def dovecot():
     'Do all the dovecot things'
-    execute(install)
+    execute(dovecot_install)

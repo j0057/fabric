@@ -10,7 +10,7 @@ from fabtools.require import deb
 
 @task
 @roles('debian-postfix')
-def install():
+def postfix_install():
     'Install postfix and friends'
     deb.packages(['postfix', 'postgrey', 'postfix-policyd-spf-python'])
 
@@ -25,7 +25,7 @@ def ensure_directive(filename, key, *values):
 
 @task
 @roles('debian-postfix')
-def configure():
+def postfix_configure():
     'Configure postfix'
     config = env.config[env.host_string]['postfix']
 
@@ -55,7 +55,7 @@ def configure():
 
 @task(default=True)
 @roles('debian-postfix')
-def main():
+def postfix():
     'Do all the postfix things'
-    execute(install)
-    execute(configure)
+    execute(postfix_install)
+    execute(postfix_configure)

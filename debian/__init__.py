@@ -14,7 +14,7 @@ from fabtools.require import deb
 
 @task
 @roles('debian')
-def set_hostname():
+def deb_set_hostname():
     "Sets the right hostname based on config"
     current = run('hostname', quiet=True)
     wanted = env.config[env.host_string]['hostname']
@@ -28,7 +28,7 @@ def set_hostname():
 
 @task
 @roles('debian')
-def set_passwords():
+def deb_set_passwords():
     'Sets the passwords based on user input'
     accounts = env.config[env.host_string]['accounts']
     passwords = [ (account, prompt('password for {0}: '.format(account)))
@@ -42,7 +42,7 @@ def set_passwords():
 
 @task
 @roles('debian')
-def create_apt_update_stamp():
+def deb_create_apt_update_stamp():
     "Create a time stamp on apt-get update"
     if not exists('/etc/apt/apt.conf.d/15update_stamp'):
         append('/etc/apt/apt.conf.d/15update_stamp',
@@ -53,7 +53,7 @@ def create_apt_update_stamp():
 
 @task
 @roles('debian-testing')
-def update_testing():
+def deb_update_testing():
     "Upgrade from stable to testing"
     deb.package('sudo')
     with watch([ '/etc/apt/sources.list',
@@ -82,7 +82,7 @@ def update_testing():
 
 @task
 @roles('debian')
-def upgrade(dist=False):
+def deb_upgrade(dist=False):
     'Upgrade everything'
     with watch('/var/lib/apt/periodic/update-success-stamp') as update:
         deb.uptodate_index(max_age=3600)
@@ -102,7 +102,7 @@ def upgrade(dist=False):
 
 @task
 @roles('debian-systemd')
-def install_systemd():
+def deb_install_systemd():
     "Install systemd and update grub config"
     if not deb.is_installed('systemd'):
         deb.package('systemd')
@@ -117,17 +117,19 @@ def install_systemd():
 
 @task
 @roles('debian')
-def bounce():
+def deb_bounce():
     "Reboot the server"
     reboot()
+    run('/bin/true')
 
 @task(default=True)
-def main():
+@roles('debian')
+def deb_main():
     "Configure all the things"
-    execute(set_hostname)
-    execute(set_passwords)
-    execute(create_apt_update_stamp)
-    execute(update_testing)
-    execute(upgrade)
-    execute(install_systemd)
+    execute(deb_set_hostname)
+    execute(deb_set_passwords)
+    execute(deb_create_apt_update_stamp)
+    execute(deb_update_testing)
+    execute(deb_upgrade)
+    execute(deb_install_systemd)
 

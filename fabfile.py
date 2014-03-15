@@ -32,9 +32,9 @@ env.update(load_yaml('settings.yaml'))
 
 @task
 def go():
-    execute(debian.main)
-    execute(debian.nginx.main)
-    execute(debian.uwsgi.main)
-    execute(debian.postfix.main)
-    execute(debian.dovecot.main)
-    execute(debian.python.main)
+    execute(debian.deb_main)
+    execute(debian.postfix.postfix)
+    execute(debian.dovecot.dovecot)
+    execute(debian.nginx.nginx)
+    execute(debian.uwsgi.uwsgi)
+    execute(debian.python.python)
