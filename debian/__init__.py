@@ -39,6 +39,11 @@ def deb_set_passwords():
         run('echo -e \'{0}\' | chpasswd'.format(s))
         for (a, _) in passwords:
             append('/etc/passwords_changed', a)
+@task
+@roles('debian')
+def deb_apt_get_install():
+    'Install apt packages'
+    fabtools.require.deb.packages(env.config[env.host_string]['apt'])
 
 @task
 @roles('debian')
@@ -55,7 +60,6 @@ def deb_create_apt_update_stamp():
 @roles('debian-testing')
 def deb_update_testing():
     "Upgrade from stable to testing"
-    deb.package('sudo')
     with watch([ '/etc/apt/sources.list',
                  '/etc/apt/sources.list.d/stable.list', 
                  '/etc/apt/sources.list.d/stable-updates.list',
@@ -128,6 +132,7 @@ def deb_main():
     "Configure all the things"
     execute(deb_set_hostname)
     execute(deb_set_passwords)
+    execute(deb_apt_get_install)
     execute(deb_create_apt_update_stamp)
     execute(deb_update_testing)
     execute(deb_upgrade)

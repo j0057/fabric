@@ -14,13 +14,6 @@ from fabric.contrib.files import *
 
 import yaml
 
-import debian
-import debian.nginx
-import debian.postfix
-import debian.dovecot
-import debian.uwsgi
-import debian.python
-
 def load_yaml(path):
     with open(path) as f:
         return yaml.load(f)
@@ -30,6 +23,16 @@ env.roledefs = { role: [ host for (host, cfg) in env.config.items() if role in c
                  for role in { role for (host, cfg) in env.config.items() for role in cfg['roles'] } }
 env.update(load_yaml('settings.yaml'))
 
+import debian
+import debian.nginx
+import debian.postfix
+import debian.dovecot
+import debian.uwsgi
+import debian.python
+import debian.samba
+import debian.sane
+import debian.nfs
+
 @task
 def go():
     execute(debian.deb_main)
@@ -38,3 +41,6 @@ def go():
     execute(debian.nginx.nginx)
     execute(debian.uwsgi.uwsgi)
     execute(debian.python.python)
+    execute(debian.samba.samba)
+    execute(debian.sane.sane)
+    execute(debian.nfs.nfs)

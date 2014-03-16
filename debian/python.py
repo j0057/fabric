@@ -33,7 +33,6 @@ def python_install():
 @roles('debian-python')
 def python_install_pip():
     'Install pip (ipip)'
-    fabtools.require.deb.package('curl')
     if not fabtools.python.is_pip_installed():
         fabtools.python.install_pip()
 

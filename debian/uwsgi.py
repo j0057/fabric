@@ -14,6 +14,7 @@ def uwsgi_install():
     'Install uWSGI'
     deb.packages(['uwsgi', 'uwsgi-plugin-python', 'uwsgi-plugin-python3', 
                   'uwsgi-plugin-cgi'])
+    #run('systemctl disable uwsgi.service')
 
 @task
 @roles('debian-uwsgi')
