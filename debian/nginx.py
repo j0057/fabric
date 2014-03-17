@@ -28,6 +28,7 @@ def nginx_configure():
         for (site, content) in env.config[env.host_string]['nginx']['sites'].items():
             fabtools.require.file('/etc/nginx/sites-enabled/' + site, contents=content)
     if sites.changed:
+        run('nginx -t')
         run('systemctl restart nginx')
 
 @task(default=True)

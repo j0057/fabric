@@ -8,6 +8,8 @@ from fabric.contrib.files import *
 from fabtools.files import watch
 from fabtools.require import deb
 
+import yaml
+
 @task
 @roles('debian-uwsgi')
 def uwsgi_install():
@@ -36,11 +38,12 @@ def uwsgi_create_systemd_unit_files():
 @roles('debian-uwsgi')
 def uwsgi_create_uwsgi_apps():
     'Enable and start sockets for uWSGI apps'
-    for name in env.config[env.host_string]['uwsgi']:
-        if not exists('/etc/systemd/system/sockets.target.wants/uwsgi@{0}.socket'
-                      .format(name)):
+    for app in env.config[env.host_string]['uwsgi']:
+        if not exists('/etc/systemd/system/sockets.target.wants/uwsgi@{name}.socket'.format(**app)):
             run('systemctl enable uwsgi@{0}.socket'.format(name))
             run('systemctl start uwsgi@{0}.socket'.format(name))
+        config = yaml.dump(app['config'])
+        fabtools.require.file('/etc/uwsgi/apps-enabled/{name}.yaml'.format(**app), contents=config)
 
 @task(default=True)
 @roles('debian-uwsgi')
@@ -58,11 +61,8 @@ After=syslog.target
 
 [Service]
 ExecStart=/usr/bin/uwsgi \\
-    --plugins=python --master --workers=1 \\
-	--socket=/run/uwsgi/%i.socket \\
-	--chdir=/srv/%i --virtualenv=/srv/%i \\
-	--module=%i --callable=app \\
-	--auto-procname --procname-prefix-spaced=%i
+    --socket=/run/uwsgi/%i.socket \\
+    --yaml=/etc/uwsgi/apps-enabled/%i.yaml
 KillSignal=SIGQUIT
 Type=notify
 StandardOutput=syslog

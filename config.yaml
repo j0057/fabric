@@ -33,20 +33,35 @@ root@127.0.0.1:20022:
                     listen 80;
                     server_name test;
                     location /hello {
-                        uwsgi_pass unix:/run/uwsgi/hello.socket;
                         include /etc/nginx/uwsgi_params;
+                        uwsgi_param HELLO_MESSAGE "Albatross!";
+                        uwsgi_pass unix:/run/uwsgi/hello.socket;
                     }
                     location / {
                         root /srv/root;
                     }
                 }
     virtualenv:
-        - path: /srv/hello
-          packages: [hello]
-          uid: www-data
-          gid: www-data
+      - path: /srv/hello
+        packages: [hello]
+        uid: www-data
+        gid: www-data
+      - path: /srv/mp3dev
+        packages: [mp3]
+        uid: www-data
+        gid: www-data
     uwsgi:
-        - hello
+      - name: hello
+        config:
+            plugins: python
+            master: yes
+            workers: 1
+            auto-procname: yes
+            procname-prefix-spaced: hello
+            chdir: /srv/hello
+            virtualenv: /srv/hello
+            module: hello
+            callable: app
     samba:
         usershare: 
           - user: jjm

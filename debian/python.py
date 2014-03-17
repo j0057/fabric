@@ -8,19 +8,17 @@ from fabric.contrib.files import *
 from fabtools.files import watch
 from fabtools.require import deb
 
-def get_installed(outdated=False, path=None):
+def get_installed(outdated=False, path=None, pre=True):
     with settings(hide('running', 'stdout', 'stderr', 'warnings'), warn_only=True): 
         if outdated:
             output = run(
-                '{0} list --outdated --no-index --find-links={1} --local | cat'.format(
-                    (path + '/bin/pip') if path else 'pip', env.pypkg_url))
-            # this is actually buggy because pip insists on complaining about http
-            # ..but who wants to name their package "Ignored" anyway? :-p
+                '{0} list --outdated --no-index --find-links={1} --local {2}| cat'.format(
+                    (path + '/bin/pip') if path else 'pip', env.pypkg_url, '--pre' if pre else ''))
             return { pkg.split()[0] for pkg in output.splitlines() }
         else:
             output = run(
-                '{0} list --local'.format(
-                    (path + '/bin/pip') if path else 'pip'))
+                '{0} list --local {1}'.format(
+                    (path + '/bin/pip') if path else 'pip', '--pre' if pre else ''))
             return { pkg.split()[0] for pkg in output.splitlines() }
 
 @task
@@ -75,9 +73,9 @@ def python_create_envs():
 def python_install_packages():
     'Install packages in virtualenvs'
     for e in env.config[env.host_string]['virtualenv']:
-        missing = set(e['packages']) - get_installed(path=e['path'])
+        missing = set(e['packages']) - get_installed(path=e['path'], pre=True)
         if missing:
-            run('{0}/bin/pip install --upgrade --no-index --find-links={1} --use-wheel {2}'.format(
+            run('{0}/bin/pip install --upgrade --no-index --find-links={1} --use-wheel --pre {2}'.format(
                 e['path'], 
                 env.pypkg_url, 
                 ' '.join(e['packages']))) 
@@ -88,9 +86,9 @@ def python_install_packages():
 def python_update_packages():
     'Install packages in virtualenvs'
     for e in env.config[env.host_string]['virtualenv']:
-        outdated = set(e['packages']) & get_installed(outdated=True, path=e['path'])
+        outdated = set(e['packages']) & get_installed(outdated=True, path=e['path'], pre=True)
         if outdated:
-            run('{0}/bin/pip install --upgrade --no-index --find-links={1} --use-wheel {2}'.format(
+            run('{0}/bin/pip install --upgrade --no-index --find-links={1} --use-wheel --pre {2}'.format(
                 e['path'], 
                 env.pypkg_url, 
                 ' '.join(e['packages']))) 
@@ -106,3 +104,5 @@ def python():
     execute(python_install_virtualenv)
     execute(python_create_envs)
     execute(python_install_packages)
+    execute(python_update_packages)
+
