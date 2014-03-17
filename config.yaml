@@ -53,15 +53,18 @@ root@127.0.0.1:20022:
     uwsgi:
       - name: hello
         config:
-            plugins: python
-            master: yes
-            workers: 1
-            auto-procname: yes
-            procname-prefix-spaced: hello
-            chdir: /srv/hello
-            virtualenv: /srv/hello
-            module: hello
-            callable: app
+            uwsgi:
+                plugins: python
+                master: true
+                workers: 1
+                auto-procname: true
+                procname-prefix-spaced: hello
+                chdir: /srv/hello
+                virtualenv: /srv/hello
+                module: hello
+                callable: app
+                env: FOO=bar
+                verbose: true
     samba:
         usershare: 
           - user: jjm

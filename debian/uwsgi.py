@@ -42,7 +42,7 @@ def uwsgi_create_uwsgi_apps():
         if not exists('/etc/systemd/system/sockets.target.wants/uwsgi@{name}.socket'.format(**app)):
             run('systemctl enable uwsgi@{0}.socket'.format(name))
             run('systemctl start uwsgi@{0}.socket'.format(name))
-        config = yaml.dump(app['config'])
+        config = yaml.dump(app['config'], default_flow_style=False)
         fabtools.require.file('/etc/uwsgi/apps-enabled/{name}.yaml'.format(**app), contents=config)
 
 @task(default=True)
@@ -67,7 +67,7 @@ KillSignal=SIGQUIT
 Type=notify
 StandardOutput=syslog
 StandardError=syslog
-NotifyAccess=main
+NotifyAccess=all
 User=www-data
 Group=www-data
 """
