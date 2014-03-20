@@ -13,10 +13,11 @@ import yaml
 @task
 @roles('debian-uwsgi')
 def uwsgi_install():
-    'Install uWSGI'
-    deb.packages(['uwsgi', 'uwsgi-plugin-python', 'uwsgi-plugin-python3', 
-                  'uwsgi-plugin-cgi'])
-    #run('systemctl disable uwsgi.service')
+    'Install uWSGI from unstable'
+    for pkg in ['uwsgi', 'uwsgi-plugin-python', 'uwsgi-plugin-python3']:
+        if not deb.is_installed(pkg):
+            deb.package(pkg + '/unstable')
+
 
 @task
 @roles('debian-uwsgi')
