@@ -41,8 +41,8 @@ def uwsgi_create_uwsgi_apps():
     'Enable and start sockets for uWSGI apps'
     for app in env.config[env.host_string]['uwsgi']:
         if not exists('/etc/systemd/system/sockets.target.wants/uwsgi@{name}.socket'.format(**app)):
-            run('systemctl enable uwsgi@{0}.socket'.format(name))
-            run('systemctl start uwsgi@{0}.socket'.format(name))
+            run('systemctl enable uwsgi@{name}.socket'.format(**app))
+            run('systemctl start uwsgi@{name}.socket'.format(**app))
         config = yaml.dump(app['config'], default_flow_style=False)
         fabtools.require.file('/etc/uwsgi/apps-enabled/{name}.yaml'.format(**app), contents=config)
 
