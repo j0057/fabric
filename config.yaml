@@ -34,7 +34,6 @@ root@127.0.0.1:20022:
                     server_name test;
                     location /hello {
                         include /etc/nginx/uwsgi_params;
-                        uwsgi_param HELLO_MESSAGE "Albatross!";
                         uwsgi_pass unix:/run/uwsgi/hello.socket;
                     }
                     location / {
@@ -63,7 +62,7 @@ root@127.0.0.1:20022:
                 virtualenv: /srv/hello
                 module: hello
                 callable: app
-                env: FOO=bar
+                env: HELLO_MESSAGE=Albatross!
                 verbose: true
     samba:
         usershare: 
