@@ -76,8 +76,7 @@ root@127.0.0.1:20022:
         exports:
           - path: /home/jjm
             net: 192.168.178.0/24
-            options: [rw,async,no_subtree_check,insecure,all_squash,
-                      anonuid=65534,anonuid=65533]
+            options: [rw,async,no_subtree_check,insecure,all_squash,anonuid=65534,anonuid=65533]
     postfix:
         mailname: |
             j0057.nl
