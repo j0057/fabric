@@ -62,9 +62,7 @@ def deb_update_testing():
     "Upgrade from stable to testing"
     with watch([ '/etc/apt/sources.list',
                  '/etc/apt/sources.list.d/stable.list', 
-                 '/etc/apt/sources.list.d/stable-updates.list',
                  '/etc/apt/sources.list.d/unstable.list',
-                 '/etc/apt/sources.list.d/unstable-updates.list',
                  '/etc/apt/sources.list.d/testing.list',
                  '/etc/apt/sources.list.d/testing-updates.list' ]) as sources_list_d:
         if contains('/etc/apt/sources.list', '^deb', escape=False):
@@ -77,7 +75,7 @@ def deb_update_testing():
             deb.source('unstable',          'http://ftp.nl.debian.org/debian/', 'unstable', *components)
             deb.source('unstable-updates',  'http://security.debian.org/',      'unstable/updates', *components)
     fabtools.require.file('/etc/apt/preferences.d/testing', 'Package: *\nPin: release a=testing\nPin-Priority: 901\n')
-    fabtools.require.file('/etc/apt/preferences.d/stable', 'Package: *\nPin: release a=stable\nPin-Priority: 101\n')
+    fabtools.require.file('/etc/apt/preferences.d/stable', 'Package: *\nPin: release a=stable\nPin-Priority: -2\n')
     fabtools.require.file('/etc/apt/preferences.d/unstable', 'Package: *\nPin: release a=unstable\nPin-Priority: -1\n')
     if sources_list_d.changed:
         run('DEBIAN_FRONTEND=noninteractive APT_LISTCHANGES_FRONTED=none apt-get'
