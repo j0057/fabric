@@ -17,6 +17,7 @@ def samba_install():
 @task
 @roles('debian-samba')
 def samba_configure_usershares():
+    'Create usershares for user'
     for u in env.config[env.host_string]['samba']['usershare']:
         with settings(hide('running', 'stdout', 'stderr', 'warnings'), warn_only=True): 
             groups = run('su {user} -c \'groups\''.format(**u)).split()

@@ -1,0 +1,50 @@
+Available commands:
+
+    go
+    debian                                        Configure all the things
+    debian.deb_apt_get_install                    Install apt packages
+    debian.deb_bounce                             Reboot the server
+    debian.deb_create_apt_update_stamp            Create a time stamp on apt-get update
+    debian.deb_install_systemd                    Install systemd and update grub config
+    debian.deb_main                               Configure all the things
+    debian.deb_set_hostname                       Sets the right hostname based on config
+    debian.deb_set_passwords                      Sets the passwords based on user input
+    debian.deb_update_testing                     Upgrade from stable to testing
+    debian.deb_upgrade                            Upgrade everything
+    debian.dovecot                                Do all the dovecot things
+    debian.dovecot.dovecot                        Do all the dovecot things
+    debian.dovecot.dovecot_install                Install dovecot
+    debian.nfs                                    Do all the NFS things
+    debian.nfs.nfs                                Do all the NFS things
+    debian.nfs.nfs_install                        Install NFS
+    debian.nginx                                  Do all the nginx things
+    debian.nginx.nginx                            Do all the nginx things
+    debian.nginx.nginx_configure                  Configure nginx servers
+    debian.nginx.nginx_install                    Install nginx
+    debian.postfix                                Do all the postfix things
+    debian.postfix.postfix                        Do all the postfix things
+    debian.postfix.postfix_configure              Configure postfix
+    debian.postfix.postfix_install                Install postfix and friends
+    debian.python                                 Do all the Python things
+    debian.python.python                          Do all the Python things
+    debian.python.python_copy_packages            Copy packages to target machine
+    debian.python.python_create_envs              Create virtualenvs
+    debian.python.python_install                  Install Python
+    debian.python.python_install_packages         Install packages in virtualenvs
+    debian.python.python_install_pip              Install pip (ipip)
+    debian.python.python_install_virtualenv       Make sure pip, virtualenv and setuptools are up to date
+    debian.python.python_update_packages          Install packages in virtualenvs
+    debian.samba                                  Do all the samba things
+    debian.samba.samba                            Do all the samba things
+    debian.samba.samba_configure_usershares       Create usershares for user
+    debian.samba.samba_install                    Install samba
+    debian.sane                                   Do all the sane things
+    debian.sane.sane                              Do all the sane things
+    debian.sane.sane_install                      Install sane
+    debian.uwsgi                                  Do all the uWSGI things
+    debian.uwsgi.uwsgi                            Do all the uWSGI things
+    debian.uwsgi.uwsgi_create_run_uwsgi           Create /run/uwsgi directory
+    debian.uwsgi.uwsgi_create_systemd_unit_files  Create unit files for socket-activated uWSGI apps (awesome)
+    debian.uwsgi.uwsgi_create_uwsgi_apps          Enable and start sockets for uWSGI apps
+    debian.uwsgi.uwsgi_install                    Install uWSGI from unstable
+
