@@ -137,8 +137,7 @@ root@127.0.0.1:20022:
             policy-spf_time_limit: 3600s
             virtual_alias_maps: hash:/etc/postfix/virtual
         master.cf: |
-            policy-spf unix - n n - - spawn
-              user=nobody argv=/usr/bin/policyd-spf
+            policy-spf unix - n n - - spawn user=nobody argv=/usr/bin/policyd-spf
         virtual: |
             @j0057.nl jjm
             @punosqnp.nl jjm
