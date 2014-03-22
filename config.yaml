@@ -26,6 +26,7 @@ root@127.0.0.1:20022:
         - sudo
         - curl
         - htop
+        - libjpeg62
     nginx:
         sites:
             test-site: |
@@ -35,6 +36,10 @@ root@127.0.0.1:20022:
                     location /hello {
                         include /etc/nginx/uwsgi_params;
                         uwsgi_pass unix:/run/uwsgi/hello.socket;
+                    }
+                    location /mp3-dev {
+                        include /etc/nginx/uwsgi_params;
+                        uwsgi_pass unix:/run/uwsgi/mp3-dev.socket;
                     }
                     location / {
                         root /srv/root;
@@ -63,7 +68,19 @@ root@127.0.0.1:20022:
                 module: hello
                 callable: app
                 env: HELLO_MESSAGE=Albatross!
-                verbose: true
+      - name: mp3-dev
+        config:
+            uwsgi:
+                plugins: python
+                master: true
+                workers: 1
+                auto-procname: true
+                procname-prefix-spaced: mp3-dev
+                chdir: /srv/mp3dev
+                virtualenv: /srv/mp3dev
+                module: mp3.server
+                callable: app
+                env: MP3_PREFIX=/mp3-dev
     samba:
         usershare: 
           - user: jjm
