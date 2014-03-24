@@ -50,10 +50,12 @@ root@127.0.0.1:20022:
         packages: [hello]
         uid: www-data
         gid: www-data
+        service: uwsgi@hello.service
       - path: /srv/mp3dev
         packages: [mp3]
         uid: www-data
         gid: www-data
+        service: uwsgi@mp3-dev.service
     uwsgi:
       - name: hello
         config:

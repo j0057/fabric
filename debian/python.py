@@ -80,6 +80,8 @@ def python_install_packages():
                 env.pypkg_url, 
                 ' '.join(e['packages']))) 
             run('chown -R {0}.{1} {2}'.format(e['uid'], e['gid'], e['path']))
+            if 'service' in e:
+                run('systemctl restart {service}'.format(**e))
 
 @task
 @roles('debian-python')

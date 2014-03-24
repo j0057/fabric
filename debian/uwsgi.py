@@ -18,7 +18,6 @@ def uwsgi_install():
         if not deb.is_installed(pkg):
             deb.package(pkg + '/unstable')
 
-
 @task
 @roles('debian-uwsgi')
 def uwsgi_create_run_uwsgi():
@@ -44,7 +43,12 @@ def uwsgi_create_uwsgi_apps():
             run('systemctl enable uwsgi@{name}.socket'.format(**app))
             run('systemctl start uwsgi@{name}.socket'.format(**app))
         config = yaml.dump(app['config'], default_flow_style=False)
-        fabtools.require.file('/etc/uwsgi/apps-enabled/{name}.yaml'.format(**app), contents=config)
+        if not exists('/etc/uwsgi/apps-enabled/{name}.yaml'.format(**app)):
+            run('touch /etc/uwsgi/apps-enabled/{name}.yaml'.format(**app))
+        with watch('/etc/uwsgi/apps-enabled/{name}.yaml'.format(**app)) as config_yaml:
+            fabtools.require.file('/etc/uwsgi/apps-enabled/{name}.yaml'.format(**app), contents=config)
+        if config_yaml.changed:
+            run('systemctl stop uwsgi@{name}.service'.format(**app))
 
 @task(default=True)
 @roles('debian-uwsgi')
