@@ -56,7 +56,7 @@ def python_install_virtualenv():
     outdated = set(pkgs) & get_installed(outdated=True)
     if missing or outdated:
         run('pip install --upgrade --no-index --find-links={0} --use-wheel {1}'
-            .format(env.pypkg_url, ' '.join(pkgs))) 
+            .format(env.pypkg_url, ' '.join(pkgs)))
 
 @task
 @roles('debian-python')
@@ -95,6 +95,8 @@ def python_update_packages():
                 env.pypkg_url, 
                 ' '.join(e['packages']))) 
             run('chown -R {0}.{1} {2}'.format(e['uid'], e['gid'], e['path']))
+            if 'service' in e:
+                run('systemctl restart {service}'.format(**e))
 
 @task(default=True)
 @roles('debian-python')
