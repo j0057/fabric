@@ -19,8 +19,12 @@ def load_yaml(path):
         return yaml.load(f)
 
 env.config = load_yaml('config.yaml')
-env.roledefs = { role: [ host for (host, cfg) in env.config.items() if role in cfg['roles'] ]
-                 for role in { role for (host, cfg) in env.config.items() for role in cfg['roles'] } }
+env.roledefs = { role: [ host 
+                         for (host, cfg) in env.config.items() 
+                         if role in cfg['roles'] ]
+                 for role in { role 
+                               for (host, cfg) in env.config.items() 
+                               for role in cfg['roles'] } }
 env.update(load_yaml('settings.yaml'))
 
 import debian
