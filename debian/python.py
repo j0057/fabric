@@ -1,5 +1,3 @@
-#!/usr/bin/env python2.7
-
 import fabtools.require
 
 from fabric.api import *
