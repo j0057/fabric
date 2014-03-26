@@ -34,6 +34,8 @@ import debian.python
 import debian.samba
 import debian.sane
 import debian.nfs
+import debian.mysql
+import data
 
 @task
 def go():
@@ -46,3 +48,5 @@ def go():
     execute(debian.samba.samba)
     execute(debian.sane.sane)
     execute(debian.nfs.nfs)
+    execute(debian.mysql.mysql)
+    

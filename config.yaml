@@ -18,6 +18,8 @@ root@127.0.0.1:20022:
         - debian-samba
         - debian-sane
         - debian-nfs
+        - debian-mysql
+        - data
     accounts: 
         - root
         - jjm
@@ -143,3 +145,7 @@ root@127.0.0.1:20022:
         virtual: |
             @j0057.nl jjm
             @punosqnp.nl jjm
+    data:
+        /srv/mp3dev/run/joost.json: joost.json
+    mysql:
+        musicdb: musicdb.sql
