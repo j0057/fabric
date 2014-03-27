@@ -27,7 +27,9 @@ def put_files():
 def get_db():
     local_dir = 'data/{0}'.format(env.host_string)
     for (db_name, local) in env.config[env.host_string]['mysql'].items():
-        print db_name, local
+        run('mysqldump {0} > /tmp/{0}.sql'.format(db_name))
+        get('/tmp/{0}.sql'.format(db_name), local_dir + '/' + local)
+        run('rm /tmp/{0}.sql'.format(db_name))
 
 @task
 @roles('data')
