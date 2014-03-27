@@ -35,7 +35,12 @@ def put_db():
     local_dir = 'data/{0}'.format(env.host_string)
     for (db_name, local) in env.config[env.host_string]['mysql'].items():
         put(local_dir + '/' + local, '/tmp/{0}.sql'.format(db_name))
-        run('echo "drop database if exists {0}" | mysql'.format(db_name))
         run('echo "create database {0}" | mysql'.format(db_name))
         run('mysql -D {0} < /tmp/{0}.sql'.format(db_name))
         run('rm /tmp/{0}.sql'.format(db_name))
+
+@task
+@roles('data')
+def drop_db():
+    for db_name in env.config[env.host_string]['mysql']:
+        run('echo drop database if exists {0} | mysql'.format(db_name))
