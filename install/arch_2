@@ -1,0 +1,24 @@
+#!/bin/bash -e
+
+message() { echo ; echo "# $1" ; echo ; }
+
+message "Setting hostname to $HOSTNAME"
+echo $HOSTNAME > /etc/hostname
+
+message "Setting timezone to Europe/Amsteredam"
+ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
+
+message "Setting locale to en_US.UTF-8"
+echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
+locale-gen
+
+message "Creating initial ram disk"
+mkinitcpio -p linux
+
+message "Setting password to root"
+echo -en "root\nroot\n" | passwd root
+
+message "Installing GRUB"
+grub-install --target=i386-pc --recheck /dev/sda
+grub-mkconfig -o /boot/grub/grub.cfg
+
